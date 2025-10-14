@@ -5,19 +5,19 @@ Use Amazon;
 -- ---------------------- 1 USERS TABLE ------------------------------------- 
 
 
--- 1️ DDL: Add a new column for membership level
+-- 1 DDL: Add a new column for membership level
 ALTER TABLE Users ADD COLUMN membership_level ENUM('Silver','Gold','Platinum') DEFAULT 'Silver';
 
--- 2️ DDL: Add a CHECK constraint on phone length
+-- 2 DDL: Add a CHECK constraint on phone length
 ALTER TABLE Users ADD CONSTRAINT chk_phone_length CHECK (LENGTH(phone) = 10);
 
--- 3️ DDL: Create an index on email for faster lookup
+-- 3 DDL: Create an index on email for faster lookup
 CREATE INDEX idx_users_email ON Users(email);
 
--- 4️ DDL: Rename column 'status' to 'account_status'
+-- 4 DDL: Rename column 'status' to 'account_status'
 ALTER TABLE Users CHANGE COLUMN status account_status ENUM('Active','Suspended','Deleted') DEFAULT 'Active';
 
--- 5️ DDL: Add ON DELETE CASCADE to city_id foreign key (demonstration)
+-- 5 DDL: Add ON DELETE CASCADE to city_id foreign key (demonstration)
 ALTER TABLE Users DROP FOREIGN KEY fk_city_id;
 ALTER TABLE Users
   ADD CONSTRAINT fk_city_id FOREIGN KEY (city_id)
@@ -25,17 +25,17 @@ ALTER TABLE Users
   ON DELETE CASCADE
   ON UPDATE CASCADE;
 
--- 6️ DML: Insert sample users
+-- 6 DML: Insert sample users
 INSERT INTO Users (first_name, last_name, email, phone, gender, dob, account_status, city_id)
 VALUES ('Riya','Sharma','riya.sharma@gmail.com','9876543210','Female','1999-06-10','Active',101),
        ('Amit','Verma','amitv@gmail.com','9988776655','Male','1998-02-15','Active',102);
 
--- 7️ DML: Update membership level based on order count (sample logic)
+-- 7 DML: Update membership level based on order count (sample logic)
 UPDATE Users
 SET membership_level = 'Gold'
 WHERE user_id IN (SELECT user_id FROM Orders GROUP BY user_id HAVING COUNT(order_id) > 5);
 
--- 8️ DML: Delete suspended users older than 2 years (cleanup)
+-- 8 DML: Delete suspended users older than 2 years (cleanup)
 DELETE FROM Users
 WHERE account_status = 'Suspended'
   AND last_login < DATE_SUB(CURRENT_DATE, INTERVAL 2 YEAR);
@@ -50,24 +50,24 @@ UPDATE Users
 SET membership_level = 'Platinum'
 WHERE gender='Female' AND city_id=(SELECT city_id FROM City WHERE city_name='Mumbai');
 
--- 11️ DQL: Display all active users ordered by newest login
+-- 11 DQL: Display all active users ordered by newest login
 SELECT user_id, CONCAT(first_name,' ',last_name) AS FullName, last_login
 FROM Users
 WHERE account_status='Active'
 ORDER BY last_login DESC;
 
--- 12️ DQL: Count total users by gender
+-- 12 DQL: Count total users by gender
 SELECT gender, COUNT(*) AS total_users
 FROM Users
 GROUP BY gender;
 
--- 13️ DQL: Find users who have not placed any orders
+-- 13 DQL: Find users who have not placed any orders
 SELECT u.user_id, u.first_name, u.email
 FROM Users u
 LEFT JOIN Orders o ON u.user_id=o.user_id
 WHERE o.order_id IS NULL;
 
--- 14️ DQL: Top 5 most recent signups
+-- 14 DQL: Top 5 most recent signups
 SELECT user_id, first_name, email, created_at
 FROM Users
 ORDER BY created_at DESC
@@ -79,13 +79,13 @@ SELECT user_id, first_name, dob,
 FROM Users
 WHERE TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 20 AND 30;
 
--- 16️ DQL: Find duplicate emails if any
+-- 16 DQL: Find duplicate emails if any
 SELECT email, COUNT(*) AS occurrences
 FROM Users
 GROUP BY email
 HAVING COUNT(*) > 1;
 
--- 17️ DQL: List top cities by number of users
+-- 17 DQL: List top cities by number of users
 SELECT c.city_name, COUNT(u.user_id) AS total_users
 FROM Users u
 JOIN City c ON u.city_id=c.city_id
@@ -93,18 +93,18 @@ GROUP BY c.city_name
 ORDER BY total_users DESC
 LIMIT 10;
 
--- 18️ DQL: Count users by membership level
+-- 18 DQL: Count users by membership level
 SELECT membership_level, COUNT(*) AS user_count
 FROM Users
 GROUP BY membership_level
 ORDER BY user_count DESC;
 
--- 19️ DQL: Users whose name starts with 'A'
+-- 19 DQL: Users whose name starts with 'A'
 SELECT user_id, CONCAT(first_name,' ',last_name) AS Name
 FROM Users
 WHERE first_name LIKE 'A%';
 
--- 20️ DQL: Check cascade behavior (test user deletion)
+-- 20 DQL: Check cascade behavior (test user deletion)
 ALTER TABLE Users DROP FOREIGN KEY fk_city_id;
 ALTER TABLE Users
   ADD CONSTRAINT fk_city_id FOREIGN KEY (city_id)
@@ -119,18 +119,18 @@ ALTER TABLE Users
 
 USE Amazon;
 
--- 1️ DDL: Add a new column for delivery_type (Comparison + default)
+-- 1 DDL: Add a new column for delivery_type (Comparison + default)
 ALTER TABLE Orders
 ADD COLUMN delivery_type ENUM('Standard','Express','Same-Day') DEFAULT 'Standard';
 
--- 2️ DDL: Add CHECK constraint to ensure positive quantity (Comparison operator)
+-- 2 DDL: Add CHECK constraint to ensure positive quantity (Comparison operator)
 ALTER TABLE Orders
 ADD CONSTRAINT chk_quantity_positive CHECK (quantity > 0);
 
--- 3️ DDL: Create index on order_date for faster lookups
+-- 3 DDL: Create index on order_date for faster lookups
 CREATE INDEX idx_orders_date ON Orders(order_date);
 
--- 4️ DDL: Add ON DELETE / ON UPDATE CASCADE for user_id foreign key
+-- 4 DDL: Add ON DELETE / ON UPDATE CASCADE for user_id foreign key
 ALTER TABLE Orders DROP FOREIGN KEY fk_user;
 ALTER TABLE Orders
   ADD CONSTRAINT fk_user FOREIGN KEY (user_id)
@@ -138,28 +138,28 @@ ALTER TABLE Orders
   ON DELETE CASCADE
   ON UPDATE CASCADE;
 
--- 5️ DDL: Rename column 'payment_method' to 'pay_method'
+-- 5 DDL: Rename column 'payment_method' to 'pay_method'
 ALTER TABLE Orders CHANGE COLUMN payment_method pay_method VARCHAR(50);
 
--- 6️ DML: Insert sample orders (Comparison + values)
+-- 6 DML: Insert sample orders (Comparison + values)
 INSERT INTO Orders (user_id, product_id, quantity, grand_total, pay_method, order_status, order_date)
 VALUES
 (1,3,2,1599.00,'UPI','Pending','2025-10-10'),
 (2,4,1,2499.00,'Credit Card','Delivered','2025-10-11');
 
--- 7️ DML: Update order status (Logical operator: AND)
+-- 7 DML: Update order status (Logical operator: AND)
 UPDATE Orders
 SET order_status = 'Shipped'
 WHERE order_status = 'Pending'
   AND grand_total > 1000;
 
--- 8️ DML: Cancel unpaid orders older than 5 days (Arithmetic + Comparison)
+-- 8 DML: Cancel unpaid orders older than 5 days (Arithmetic + Comparison)
 UPDATE Orders
 SET order_status = 'Cancelled'
 WHERE pay_status = 'Unpaid'
   AND DATEDIFF(CURDATE(), order_date) > 5;
 
--- 9️ DML: Delete all cancelled orders older than 2024 (Logical + Comparison)
+-- 9 DML: Delete all cancelled orders older than 2024 (Logical + Comparison)
 DELETE FROM Orders
 WHERE order_status = 'Cancelled'
   AND order_date < '2024-01-01';
@@ -169,27 +169,27 @@ UPDATE Orders
 SET promo_id = (SELECT promo_id FROM Promotions WHERE promo_code='FESTIVE25' LIMIT 1)
 WHERE order_id IN (1,2,3,4);
 
--- 11️ DQL: List all orders with user and product (Aliases + JOIN)
+-- 11 DQL: List all orders with user and product (Aliases + JOIN)
 SELECT o.order_id, u.full_name AS Customer, p.product_name, o.grand_total, o.order_status
 FROM Orders o
 JOIN Users u ON o.user_id = u.user_id
 JOIN Products p ON o.product_id = p.product_id
 ORDER BY o.order_date DESC;
 
--- 12️ DQL: Total revenue per payment method (GROUP BY + Aggregate + Alias)
+-- 12 DQL: Total revenue per payment method (GROUP BY + Aggregate + Alias)
 SELECT pay_method AS PaymentType, SUM(grand_total) AS TotalRevenue
 FROM Orders
 GROUP BY pay_method
 ORDER BY TotalRevenue DESC;
 
--- 13️ DQL: Count monthly orders for 2025 (Arithmetic + GROUP BY)
+-- 13 DQL: Count monthly orders for 2025 (Arithmetic + GROUP BY)
 SELECT MONTH(order_date) AS MonthNumber, COUNT(order_id) AS OrdersCount
 FROM Orders
 WHERE YEAR(order_date)=2025
 GROUP BY MONTH(order_date)
 ORDER BY MonthNumber;
 
--- 14️ DQL: Top 5 users by total spent (Aliases + HAVING)
+-- 14 DQL: Top 5 users by total spent (Aliases + HAVING)
 SELECT u.user_id, u.full_name, SUM(o.grand_total) AS TotalSpent
 FROM Orders o
 JOIN Users u ON o.user_id = u.user_id
@@ -198,12 +198,12 @@ HAVING SUM(o.grand_total) > 1000
 ORDER BY TotalSpent DESC
 LIMIT 5;
 
--- 15️ DQL: Find orders without shipments yet (Special NOT IN)
+-- 15 DQL: Find orders without shipments yet (Special NOT IN)
 SELECT order_id, user_id, order_status
 FROM Orders
 WHERE order_id NOT IN (SELECT order_id FROM Shipments);
 
--- 16️ DQL: Average order amount per city (GROUP BY + JOIN + Alias)
+-- 16 DQL: Average order amount per city (GROUP BY + JOIN + Alias)
 SELECT c.city_name AS City, ROUND(AVG(o.grand_total),2) AS AvgOrderValue
 FROM Orders o
 JOIN Users u ON o.user_id=u.user_id
@@ -212,27 +212,27 @@ GROUP BY c.city_name
 ORDER BY AvgOrderValue DESC
 LIMIT 10;
 
--- 17️ DQL: Orders using arithmetic operator on totals (price × quantity)
+-- 17 DQL: Orders using arithmetic operator on totals (price × quantity)
 SELECT order_id, quantity, grand_total, (grand_total / quantity) AS PerItemPrice
 FROM Orders
 WHERE quantity > 0
 ORDER BY PerItemPrice DESC
 LIMIT 10;
 
--- 18️ DQL: Orders between price range and not Cancelled (Special BETWEEN + Logical NOT)
+-- 19 DQL: Orders between price range and not Cancelled (Special BETWEEN + Logical NOT)
 SELECT order_id, grand_total, order_status
 FROM Orders
 WHERE grand_total BETWEEN 1000 AND 5000
   AND NOT order_status = 'Cancelled';
 
--- 19️ DQL: Count orders by status (GROUP BY + HAVING + Alias)
+-- 19 DQL: Count orders by status (GROUP BY + HAVING + Alias)
 SELECT order_status AS Status, COUNT(*) AS TotalOrders
 FROM Orders
 GROUP BY order_status
 HAVING COUNT(*) > 1
 ORDER BY TotalOrders DESC;
 
--- 20️ DQL: Verify CASCADE behavior (test deletion)
+-- 20 DQL: Verify CASCADE behavior (test deletion)
 ALTER TABLE Orders DROP FOREIGN KEY fk_user;
 ALTER TABLE Orders
   ADD CONSTRAINT fk_user FOREIGN KEY (user_id)
@@ -254,15 +254,15 @@ HAVING COUNT(*) > 2;
 
 USE Amazon;
 
--- 1️ DDL: Add a column for product_brand
+-- 1 DDL: Add a column for product_brand
 ALTER TABLE Products
 ADD COLUMN product_brand VARCHAR(100);
 
--- 2️ DDL: Add CHECK constraint to ensure price > 0  (Comparison operator)
+-- 2 DDL: Add CHECK constraint to ensure price > 0  (Comparison operator)
 ALTER TABLE Products
 ADD CONSTRAINT chk_price_positive CHECK (price > 0);
 
--- 3️ DDL: Add foreign key to Categories with ON DELETE / ON UPDATE CASCADE
+-- 3 DDL: Add foreign key to Categories with ON DELETE / ON UPDATE CASCADE
 ALTER TABLE Products DROP FOREIGN KEY fk_category_id;
 ALTER TABLE Products
   ADD CONSTRAINT fk_category_id FOREIGN KEY (category_id)
@@ -270,29 +270,29 @@ ALTER TABLE Products
   ON DELETE CASCADE
   ON UPDATE CASCADE;
 
--- 4️ DDL: Create index on product_name for faster searching
+-- 4 DDL: Create index on product_name for faster searching
 CREATE INDEX idx_products_name ON Products(product_name);
 
--- 5️ DDL: Rename column description → product_description
+-- 5 DDL: Rename column description → product_description
 ALTER TABLE Products CHANGE COLUMN description product_description TEXT;
 
--- 6️ DML: Insert new sample products (Comparison + values)
+-- 6 DML: Insert new sample products (Comparison + values)
 INSERT INTO Products (product_name, product_brand, category_id, price, stock, rating, status)
 VALUES
 ('Echo Dot 5th Gen','Amazon',2,4499.00,150,4.7,'Active'),
 ('Noise Smartwatch','Noise',3,2999.00,200,4.5,'Active');
 
--- 7️ DML: Update product price using Arithmetic operator (+10%)
+-- 7 DML: Update product price using Arithmetic operator (+10%)
 UPDATE Products
 SET price = price + (price * 0.10)
 WHERE category_id IN (2,3);
 
--- 8️ DML: Mark discontinued products when stock = 0 (Comparison)
+-- 8 DML: Mark discontinued products when stock = 0 (Comparison)
 UPDATE Products
 SET status = 'Discontinued'
 WHERE stock = 0;
 
--- 9️ DML: Reduce stock after recent orders (Arithmetic −)
+-- 9 DML: Reduce stock after recent orders (Arithmetic −)
 UPDATE Products
 SET stock = stock - 5
 WHERE product_id IN (1,2,3);
@@ -301,50 +301,50 @@ WHERE product_id IN (1,2,3);
 DELETE FROM Products
 WHERE status='Inactive' AND stock=0;
 
--- 11️ DQL: List all products with category name (Aliases + JOIN)
+-- 11 DQL: List all products with category name (Aliases + JOIN)
 SELECT p.product_id, p.product_name, c.category_name, p.price, p.status
 FROM Products p
 JOIN Categories c ON p.category_id=c.category_id
 ORDER BY p.price DESC;
 
--- 12️ DQL: Show top 5 highest rated products (Comparison + ORDER BY LIMIT)
+-- 12 DQL: Show top 5 highest rated products (Comparison + ORDER BY LIMIT)
 SELECT product_id, product_name, rating
 FROM Products
 WHERE rating > 4.0
 ORDER BY rating DESC
 LIMIT 5;
 
--- 13️ DQL: Average price per category (GROUP BY + Alias)
+-- 13 DQL: Average price per category (GROUP BY + Alias)
 SELECT c.category_name AS Category, ROUND(AVG(p.price),2) AS AvgPrice
 FROM Products p
 JOIN Categories c ON p.category_id=c.category_id
 GROUP BY c.category_name
 ORDER BY AvgPrice DESC;
 
--- 14️ DQL: Count products per brand > 1 (HAVING)
+-- 14 DQL: Count products per brand > 1 (HAVING)
 SELECT product_brand, COUNT(*) AS TotalProducts
 FROM Products
 GROUP BY product_brand
 HAVING COUNT(*) > 1;
 
--- 15️ DQL: Products priced BETWEEN 1000 AND 10000 (Special BETWEEN)
+-- 15 DQL: Products priced BETWEEN 1000 AND 10000 (Special BETWEEN)
 SELECT product_id, product_name, price
 FROM Products
 WHERE price BETWEEN 1000 AND 10000
 ORDER BY price ASC;
 
--- 16️ DQL: Products name starting with ‘N’ (Special LIKE)
+-- 16 DQL: Products name starting with ‘N’ (Special LIKE)
 SELECT product_id, product_name
 FROM Products
 WHERE product_name LIKE 'N%';
 
--- 17️ DQL: Products not discontinued and rating > 3.5 (Logical NOT + Comparison)
+-- 17 DQL: Products not discontinued and rating > 3.5 (Logical NOT + Comparison)
 SELECT product_id, product_name, rating
 FROM Products
 WHERE NOT status='Discontinued'
   AND rating>3.5;
 
--- 18️ DQL: Stock-value calculation (price × stock) (Arithmetic)
+-- 18 DQL: Stock-value calculation (price × stock) (Arithmetic)
 SELECT product_id, product_name,
        price, stock,
        (price * stock) AS TotalStockValue
@@ -352,13 +352,13 @@ FROM Products
 ORDER BY TotalStockValue DESC
 LIMIT 10;
 
--- 19️ DQL: Find brands with total stock > 100 (GROUP BY + HAVING)
+-- 19 DQL: Find brands with total stock > 100 (GROUP BY + HAVING)
 SELECT product_brand, SUM(stock) AS TotalStock
 FROM Products
 GROUP BY product_brand
 HAVING SUM(stock) > 100;
 
--- 20️ DQL: Verify cascade (Category → Products)
+-- 20 DQL: Verify cascade (Category → Products)
 
 
 -- ----------------------------------------- CATEGORIES 4. -------------------------------------
