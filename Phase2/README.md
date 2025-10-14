@@ -6,7 +6,7 @@ This repository tracks the development of a **comprehensive Amazon eCommerce Dat
 
 ## 🚀 Phase 2: Core Operational & Analytical Queries
 
-Phase 2 builds upon the Phase 1 Database Architecture by implementing **SQL queries essential for operational reporting, analytics, and business insights**. These queries extract meaningful patterns from a **25-table relational schema** covering every functional area of an Amazon-like platform.
+Phase 2 builds upon the Phase 1 Database by implementing **SQL queries essential for operational reporting, analytics, and business insights**. These queries extract meaningful patterns from a **25-table relational schema** covering every functional area of an Amazon-like platform.
 
 ---
 
@@ -48,20 +48,6 @@ This file is structured into sections corresponding to major **business areas an
 
 ## 🧠 Highlights of Implemented Queries
 
-- **Joins & Relationships:**  
-  `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `CROSS JOIN` between **customer, order, and payment modules**.
-
-- **Subqueries:**  
-  Nested queries for filtering **top-performing products, sellers, and buyers**.
-
-- **Aggregate Functions:**  
-  `SUM()`, `COUNT()`, `AVG()`, `MAX()`, `MIN()` for **sales, ratings, and inventory metrics**.
-
-- **User-Defined Functions (UDFs):**  
-  Compute **discount percentages and final order totals automatically**.
-
-- **Triggers & Constraints:**  
-  Automate updates like **inventory count adjustment after order placement**.
 
 ---
 
