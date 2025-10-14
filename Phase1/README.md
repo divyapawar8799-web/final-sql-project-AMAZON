@@ -5,7 +5,7 @@ It is designed to manage every aspect of an online retail platform — including
 
 ---
 
-## 🎯 Phase 1: Database Architecture and Schema Implementation
+## 🎯 Phase 1: Database E-Commerce and Schema Implementation
 
 **Phase 1** focuses on building a robust **relational database schema** for Amazon-like operations.  
 This serves as the backend foundation for all future phases — query development, analytics, API integration, and dashboard reporting.
